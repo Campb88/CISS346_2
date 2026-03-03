@@ -1,0 +1,42 @@
+name: SonarQube Cloud Analysis
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # helps Sonar with history/branch analysis
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      # If your project uses Maven, uncomment this:
+      # - name: Build with Maven
+      #   run: mvn -B test
+
+      # If your project uses Gradle, uncomment this:
+      # - name: Build with Gradle
+      #   run: ./gradlew test
+
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarcloud-github-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=campb88-1
+            -Dsonar.projectKey=Campb88_CISS346_2
